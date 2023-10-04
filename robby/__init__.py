@@ -272,7 +272,7 @@ class World(GraphWin):
         return None
 
     def _checkForCycle(self, state, history, limit):
-        for period in range(1, len(history)/limit + 1):
+        for period in range(1, len(history)//limit + 1):
             if self._checkForCycleOfPeriod(period, state, history, limit):
                 # cycle found
                 return period
