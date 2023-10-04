@@ -37,7 +37,7 @@ rw.save(filename)
 
 """
 
-from graphics import *
+from robby.graphics import *
 import random, time, os
 
 POSSIBLE_ACTIONS = ["MoveNorth", "MoveSouth", "MoveEast", "MoveWest", "StayPut", "PickUpCan", "MoveRandom"]
@@ -175,7 +175,7 @@ class World(GraphWin):
         x1, y1 = self.cellw, self.cellh
         x2, y2 = self.cellw*(numCols+1), self.cellh*(numRows+1)
         x, y = x1, y1
-        for r in xrange(numRows+1):
+        for r in range(numRows+1):
             Line(Point(x1, y), Point(x2, y)).draw(self)
             Line(Point(x, y1), Point(x, y2)).draw(self)
             x += self.cellw
@@ -190,7 +190,7 @@ class World(GraphWin):
         self.robbyRow = 0
         self.robbyCol = 0
         # create the cells
-        self.grid = [[GridCell(self,r,c) for c in xrange(numCols)] for r in xrange(numRows)]
+        self.grid = [[GridCell(self,r,c) for c in range(numCols)] for r in range(numRows)]
         
     def graphicsOff(self, message=""):
         if self.graphicsEnabled:
@@ -207,13 +207,13 @@ class World(GraphWin):
             self._updateGrid()
 
     def _updateGrid(self):
-        for r in xrange(self.numRows):
-            for c in xrange(self.numCols):
+        for r in range(self.numRows):
+            for c in range(self.numCols):
                 self.grid[r][c].updateGraphics()
 
     def distributeCans(self, density=0.50):
-        for r in xrange(self.numRows):
-            for c in xrange(self.numCols):
+        for r in range(self.numRows):
+            for c in range(self.numCols):
                 self.grid[r][c].setContents("C" if random.uniform(0, 1) < density else "E")
 
     def demo(self, strategy, steps=200, init=0.50):
@@ -238,7 +238,7 @@ class World(GraphWin):
         cycleStart = 0
         self.graphicsOn()
         time.sleep(1)
-        for i in xrange(steps):
+        for i in range(steps):
             p = self.getPerceptCode()
             action = POSSIBLE_ACTIONS[int(strategy[p])]
             self.performAction(action)
@@ -272,7 +272,7 @@ class World(GraphWin):
         return None
 
     def _checkForCycle(self, state, history, limit):
-        for period in xrange(1, len(history)/limit + 1):
+        for period in range(1, len(history)/limit + 1):
             if self._checkForCycleOfPeriod(period, state, history, limit):
                 # cycle found
                 return period
@@ -282,18 +282,18 @@ class World(GraphWin):
         if len(history) < period * limit:
             # not enough history yet
             return False
-        for i in xrange(1, limit+1):
+        for i in range(1, limit+1):
             k = len(history) - i * period
             if history[k] != state:
                 return False
         return True
 
     def _gridContents(self):
-        return "".join([self.grid[r][c].contents for r in xrange(self.numRows) for c in xrange(self.numCols)])
+        return "".join([self.grid[r][c].contents for r in range(self.numRows) for c in range(self.numCols)])
 
     def performAction(self, action):
         if action not in POSSIBLE_ACTIONS:
-            print "ERROR -- possible actions are:\n%s" % POSSIBLE_ACTIONS
+            print("ERROR -- possible actions are:\n%s" % POSSIBLE_ACTIONS)
             return
         if action == "MoveNorth" and self.robbyRow == self.topRow or \
                 action == "MoveSouth" and self.robbyRow == self.bottomRow or \
@@ -378,35 +378,35 @@ class World(GraphWin):
 
     def show(self):
         s = ""
-        for r in xrange(self.numRows):
-            for c in xrange(self.numCols):
+        for r in range(self.numRows):
+            for c in range(self.numCols):
                 if r == self.robbyRow and c == self.robbyCol:
                     s += "CR " if self.grid[r][c].contents == "C" else "R  "
                 else:
                     s += "C  " if self.grid[r][c].contents == "C" else ".  "
             s += "\n"
-        print s.strip()
+        print(s.strip())
 
     def load(self, configFilename):
         f = open(configFilename)
         lines = [line.strip() for line in f]
         f.close()
         if len(lines) != self.numRows + 2 or len(lines[0]) != self.numCols:
-            print "ERROR -- invalid grid format in file %s" % configFilename
+            print("ERROR -- invalid grid format in file %s" % configFilename)
             return
         self.goto(int(lines[-2]), int(lines[-1]))
-        for r in xrange(self.numRows):
-            for c in xrange(self.numCols):
+        for r in range(self.numRows):
+            for c in range(self.numCols):
                 self.grid[r][c].setContents("E" if lines[r][c] == "." else "C")
 
     def save(self, configFilename):
         f = open(configFilename, "w")
-        for r in xrange(self.numRows):
-            for c in xrange(self.numCols):
+        for r in range(self.numRows):
+            for c in range(self.numCols):
                 f.write("." if self.grid[r][c].contents == "E" else "C")
             f.write("\n")
         f.write("%d\n" % self.robbyRow)
         f.write("%d\n" % self.robbyCol)
         f.close()
-        print "Configuration saved in file %s" % configFilename
+        print("Configuration saved in file %s" % configFilename)
 
